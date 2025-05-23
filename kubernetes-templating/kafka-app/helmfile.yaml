@@ -1,0 +1,58 @@
+releases:
+  - name: kafka-prod
+    namespace: prod
+    chart: bitnami/kafka
+    version: 25.3.5
+    installed: true
+    values:
+      - global:
+          namespaceOverride: prod
+      - kraft:
+          enabled: true
+          clusterId: "j1foO9_3SfWrT4G_2QYQ0w"
+      - broker:
+          replicaCount: 5
+      - controller:
+          replicaCount: 3
+      - image:
+          tag: 3.5.2-debian-12-r30
+      - auth:
+          clientProtocol: sasl
+          interBrokerProtocol: sasl
+          sasl:
+            mechanism: plain
+            jaas:
+              clientUsers:
+                - user1
+              clientPasswords:
+                - password1
+              interBrokerUser: broker
+              interBrokerPassword: brokerpass
+
+  - name: kafka-dev
+    namespace: dev
+    chart: bitnami/kafka
+    installed: true
+    values:
+      - global:
+          namespaceOverride: dev
+      - kraft:
+          enabled: true
+          clusterId: "yXQhQV4pQhuGP5WJjwARjA"
+      - broker:
+          replicaCount: 1
+      - controller:
+          replicaCount: 3
+      - image:
+          tag: latest
+        auth:
+          enabled: false
+          clientProtocol: plaintext
+          interBrokerProtocol: plaintext
+      - resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
