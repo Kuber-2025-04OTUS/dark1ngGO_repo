@@ -1,0 +1,111 @@
+app:
+  name: nginx-deployment
+  svcAccount: monitoring
+  appLabel: homework-web
+  replicaCount: 3
+  namespace: homework
+  volumes:
+    volumeName: shared-volume
+  initContainer:
+    name: init-downloader
+    image: busybox
+    command: |
+      echo "<html><body><h1>Hello from /homework!</h1></body></html>" > /init/index.html
+      mkdir -p /init/generated
+      > /init/generated/file
+      for f in /config/*; do
+        echo "$(basename $f): $(cat $f)" >> /init/generated/file
+      done
+  containers:
+    nginx:
+      name: nginx
+      repository: nginx
+      tag: stable-alpine
+    metrics:
+      name: metrics-fetcher
+      repository: curlimages/curl
+      tag: latest
+      env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+      command: |
+        while true; do
+          TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+          curl -s -k -H "Authorization: Bearer $TOKEN" "https://${NODE_IP}:10250/metrics" > /homework/metrics.html
+          sleep 30
+        done
+    probePort: 80
+    containerPort: 80
+  enableProbes: yes
+  resources:
+    nginx:
+      requests:
+        memory: "256Mi"
+        cpu: "200m"
+      limits:
+        memory: "512Mi"
+        cpu: "400m"
+    metrics:
+      requests:
+        memory: "64Mi"
+        cpu: "100m"
+      limits:
+        memory: "128Mi"
+        cpu: "200m"
+
+configMaps:
+  nginx:
+    name: nginx-homework-config
+    defaultConf: |
+      server {
+          listen 80;
+
+          location / {
+              root /homework;
+              index index.html;
+          }
+
+          location /metrics.html {
+              alias /homework/metrics.html;
+          }
+
+          location /conf/file {
+              alias /homework/generated/file;
+              default_type text/plain;
+          }
+      }
+
+service:
+  name: homework-service
+  port: 80
+  type: ClusterIP
+
+ingress:
+  name: homework-ingress
+  className: nginx
+  host: homework.otus
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  paths:
+    - path: /homepage(/|$)(.*)
+      pathType: Prefix
+    - path: /()(.*)
+      pathType: Prefix
+
+monitoringRole:
+  name: kubelet-metrics-reader
+  rules:
+    - nonResourceURLs:
+        - "/metrics"
+      verbs:
+        - "get"
+    - apiGroups:
+        - ""
+      resources:
+        - "nodes/metrics"
+      verbs:
+        - "get"
+        - "list"

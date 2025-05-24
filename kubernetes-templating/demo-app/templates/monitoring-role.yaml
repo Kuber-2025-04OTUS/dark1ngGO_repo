@@ -1,0 +1,8 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Values.monitoringRole.name }}
+  labels:
+    app: {{ .Values.app.appLabel }}
+rules:
+{{ .Values.monitoringRole.rules | toYaml | nindent 2 }}
