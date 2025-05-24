@@ -14,6 +14,7 @@ releases:
           replicaCount: 5
       - controller:
           replicaCount: 3
+          quorumVoters: "0@kafka-dev-controller-0.kafka-dev-controller-headless.dev.svc.cluster.local:9093,1@kafka-dev-controller-1.kafka-dev-controller-headless.dev.svc.cluster.local:9093,2@kafka-dev-controller-2.kafka-dev-controller-headless.dev.svc.cluster.local:9093"
       - image:
           tag: 3.5.2-debian-12-r30
       - auth:
@@ -32,6 +33,7 @@ releases:
   - name: kafka-dev
     namespace: dev
     chart: bitnami/kafka
+    version: 25.3.5
     installed: true
     values:
       - global:
@@ -43,16 +45,10 @@ releases:
           replicaCount: 1
       - controller:
           replicaCount: 3
+          quorumVoters: "0@kafka-dev-controller-0.kafka-dev-controller-headless.dev.svc.cluster.local:9093,1@kafka-dev-controller-1.kafka-dev-controller-headless.dev.svc.cluster.local:9093,2@kafka-dev-controller-2.kafka-dev-controller-headless.dev.svc.cluster.local:9093"
       - image:
-          tag: latest
+          tag: 3.5.2-debian-12-r30
         auth:
           enabled: false
           clientProtocol: plaintext
           interBrokerProtocol: plaintext
-      - resources:
-          requests:
-            cpu: 100m
-            memory: 512Mi
-          limits:
-            cpu: 1000m
-            memory: 1Gi
