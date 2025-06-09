@@ -1,0 +1,112 @@
+loki:
+  auth_enabled: false
+
+  commonConfig:
+    replication_factor: 1
+    storage:
+      s3:
+        bucketnames: homeworkloki
+        endpoint: https://storage.yandexcloud.net/homeworkloki
+        region: aws:amz:ru-central1:s3
+        access_key_id: xxxxxxxxx
+        secret_access_key: xxxxxxxx
+        s3forcepathstyle: true # важно для некоторых S3-совместимых API
+
+  storage:
+    type: s3
+    s3:
+      bucketnames: homeworkloki
+      endpoint: https://storage.yandexcloud.net/homeworkloki
+      region: aws:amz:ru-central1:s3
+      access_key_id: xxxxxx
+      secret_access_key: xxxxxx
+      s3forcepathstyle: true
+
+  podAnnotations: {}
+
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
+
+  nodeSelector:
+    node-role: infra
+
+read:
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
+
+  nodeSelector:
+    node-role: infra
+
+write:
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
+
+  nodeSelector:
+    node-role: infra
+
+backend:
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
+
+  nodeSelector:
+    node-role: infra
+
+promtail:
+  enabled: true
+  daemonSet:
+    enabled: true
+
+  config:
+    clients:
+      - url: http://loki.loki-space.svc.cluster.local:3100/loki/api/v1/push
+    snippets:
+      pipelineStages:
+        - docker: {}
+        - cri: {}
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-role
+                operator: In
+                values:
+                  - infra
+                  - notInfra
+  tolerations:
+    - operator: "Exists"
+
+grafana:
+  enabled: true
+
+  nodeSelector:
+    node-role: infra
+
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
+
+  persistence:
+    enabled: true
+    storageClassName: yc-network-hdd
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+
+  adminUser: admin
+  adminPassword: prom-operator
