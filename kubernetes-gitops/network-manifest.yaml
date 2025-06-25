@@ -1,0 +1,8 @@
+project: otus
+source:
+  repoURL: https://github.com/Kuber-2025-04OTUS/dark1ngGO_repo.git
+  path: kubernetes-networks
+  targetRevision: kubernetes-gitops
+destination:
+  server: https://158.160.175.173
+  namespace: homework

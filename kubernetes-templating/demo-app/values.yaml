@@ -3,7 +3,7 @@ app:
   svcAccount: monitoring
   appLabel: homework-web
   replicaCount: 3
-  namespace: homework
+  namespace: homework-helm
   volumes:
     volumeName: shared-volume
   initContainer:
@@ -85,15 +85,15 @@ service:
 ingress:
   name: homework-ingress
   className: nginx
-  host: homework.otus
+  host: homework-helm.otus
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/use-regex: "true"
   paths:
     - path: /homepage(/|$)(.*)
-      pathType: Prefix
+      pathType: ImplementationSpecific
     - path: /()(.*)
-      pathType: Prefix
+      pathType: ImplementationSpecific
 
 monitoringRole:
   name: kubelet-metrics-reader
