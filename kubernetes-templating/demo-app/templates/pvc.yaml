@@ -4,7 +4,7 @@ metadata:
   name: homework-pvc
   namespace: {{ .Values.app.namespace }}
 spec:
-  storageClassName: minikube-hostpath-retain
+  storageClassName: yc-network-hdd
   resources:
     requests:
       storage: 1Gi
