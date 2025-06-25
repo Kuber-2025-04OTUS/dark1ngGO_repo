@@ -2,6 +2,6 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: minikube-hostpath-retain
-provisioner: k8s.io/minikube-hostpath
+provisioner: disk-csi-driver.mks.ycloud.io
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
