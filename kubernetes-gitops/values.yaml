@@ -1,0 +1,68 @@
+controller:
+  nodeSelector:
+    node-role: infra
+  tolerations:
+    - key: node-role
+      operator: Equal
+      value: infra
+      effect: NoSchedule
+
+repoServer:
+  nodeSelector:
+    node-role: infra
+  tolerations:
+    - key: node-role
+      operator: Equal
+      value: infra
+      effect: NoSchedule
+
+applicationSet:
+  enabled: true
+  nodeSelector:
+    node-role: infra
+  tolerations:
+    - key: node-role
+      operator: Equal
+      value: infra
+      effect: NoSchedule
+
+dex:
+  enabled: true
+  nodeSelector:
+    node-role: infra
+  tolerations:
+    - key: node-role
+      operator: Equal
+      value: infra
+      effect: NoSchedule
+
+redis:
+  nodeSelector:
+    node-role: infra
+  tolerations:
+    - key: node-role
+      operator: Equal
+      value: infra
+      effect: NoSchedule
+
+server:
+  nodeSelector:
+    node-role: infra
+  tolerations:
+    - key: node-role
+      operator: Equal
+      value: infra
+      effect: NoSchedule
+  service:
+    type: LoadBalancer
+    ports:
+      http: 80
+      https: 443
+  ingress:
+    enabled: false
+  metrics:
+    enabled: true
+
+configs:
+  params:
+    server.insecure: true
