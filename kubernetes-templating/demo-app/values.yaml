@@ -3,7 +3,7 @@ app:
   svcAccount: monitoring
   appLabel: homework-web
   replicaCount: 3
-  namespace: homework
+  namespace: homework-helm
   volumes:
     volumeName: shared-volume
   initContainer:
