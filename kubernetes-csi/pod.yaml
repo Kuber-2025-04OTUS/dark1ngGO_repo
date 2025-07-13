@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s3-test-pod
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command: ["/bin/sh"]
+      args: ["-c", "while true; do date >> /mnt/data/log.txt; sleep 10; done"]
+      volumeMounts:
+        - name: s3-volume
+          mountPath: /mnt/data
+  volumes:
+    - name: s3-volume
+      persistentVolumeClaim:
+        claimName: s3-pvc
