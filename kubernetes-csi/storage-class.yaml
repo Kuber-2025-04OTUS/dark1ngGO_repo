@@ -1,0 +1,16 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-s3
+provisioner: ru.yandex.s3.csi
+parameters:
+  mounter: fuse
+  bucket: yc-k8s-bucket
+  region: ru-central1
+  endpoint: https://storage.yandexcloud.net
+  csi.storage.k8s.io/provisioner-secret-name: s3-secret
+  csi.storage.k8s.io/provisioner-secret-namespace: kube-system
+  csi.storage.k8s.io/node-stage-secret-name: s3-secret
+  csi.storage.k8s.io/node-stage-secret-namespace: kube-system
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
